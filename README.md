@@ -1,7 +1,7 @@
 # Switch Security Configuration
 
 Project Overview:
-In this project, we will be enhancing the security on two access layer switches (SW-1 and SW-2) in a partially configured network. The goal is to implement a series of security measures to ensure the integrity and stability of the network while preventing unauthorized access and attacks.
+In this project, I will be enhancing the security on two access layer switches (SW-1 and SW-2) in a partially configured network. The goal is to implement a series of security measures to ensure the integrity and stability of the network while preventing unauthorized access and attacks.
 
 This project will cover the following security tasks:
 
@@ -10,119 +10,141 @@ Shutting down unused switchports
 Implementing port security to control the number of MAC addresses learned
 Enabling DHCP Snooping to protect against DHCP spoofing attacks
 Configuring PortFast and BPDU Guard to prevent network loops and ensure quick network convergence.
-By completing these steps, we will secure the switches' ports, protect against various attack vectors, and ensure optimal network performance.
+By completing these steps, I will secure the switches' ports, protect against various attack vectors, and ensure optimal network performance.
 
 Objectives:
+
 Part 1: Create a Secure Trunk
 
 Configure trunk links between the two access switches.
 Secure the trunk by disabling DTP negotiation and setting VLAN 100 as the native VLAN.
+
 Part 2: Secure Unused Switchports
 
 Shut down unused switchports on SW-1.
 Move unused switchports to a "BlackHole" VLAN (VLAN 999) to isolate them.
+
 Part 3: Implement Port Security
 
 Configure port security to limit the number of MAC addresses learned.
 Statistically configure the MAC address on certain ports.
 Set up port security violation actions.
+
 Part 4: Enable DHCP Snooping
 
 Configure DHCP Snooping to protect against rogue DHCP servers.
 Limit DHCP packets on untrusted ports.
+
 Part 5: Configure Rapid PVST PortFast and BPDU Guard
 
 Enable PortFast on access ports to speed up the transition of the port to the forwarding state.
 Enable BPDU Guard to protect the network from potential network loops.
-Network Topology:
-SW-1: Main access switch where most configuration tasks are carried out.
-SW-2: Secondary access switch.
-VLANs: VLAN 10, VLAN 20, VLAN 99, VLAN 100, and VLAN 999.
-Devices: Computers connected to the switch, routers, etc.
-Trunking Links: The trunk link between SW-1 and SW-2 is configured on ports G0/1 and G0/2.
+
+![{054A7638-FF61-424F-84C0-4156168CAF03}](https://github.com/user-attachments/assets/7e559e76-cb24-4bb6-9642-5816285e4c9c)
+
+
 Step-by-Step Configuration:
+
 Step 1: Create a Secure Trunk
 Goal: Secure the trunk link between the two access layer switches (SW-1 and SW-2).
 
 Connect the G0/2 Ports: Connect the G0/2 ports of both switches using a straight-through Ethernet cable.
 
 Configure Trunk Ports:
-
 On SW-1, enter configuration mode and set port G0/1 and G0/2 to static trunks:
 
-bash
-Copy code
 SW-1# configure terminal
+
 SW-1(config)# interface range g0/1 - 2
+
 SW-1(config-if-range)# switchport mode trunk
+
 SW-1(config-if-range)# switchport nonegotiate
+
 SW-1(config-if-range)# exit
+
 On SW-2, configure G0/1 and G0/2 as static trunks as well:
 
-bash
-Copy code
 SW-2# configure terminal
+
 SW-2(config)# interface range g0/1 - 2
+
 SW-2(config-if-range)# switchport mode trunk
+
 SW-2(config-if-range)# switchport nonegotiate
+
 SW-2(config-if-range)# exit
+
 Create VLAN 100 on both switches and set it as the native VLAN:
 
-bash
-Copy code
 SW-1(config)# vlan 100
 SW-1(config-vlan)# name Native
 SW-1(config-vlan)# exit
 SW-1(config)# interface range g0/1 - 2
 SW-1(config-if-range)# switchport trunk native vlan 100
 SW-1(config-if-range)# exit
-Do the same on SW-2.
+Did the same on SW-2.
+
+![{8271D13E-3115-42AD-9641-0E8A849F4299}](https://github.com/user-attachments/assets/1fef15ad-7713-4624-a20d-532d319b7725)
+
+![{820C101F-04CB-430B-9FC3-2E7A590384A8}](https://github.com/user-attachments/assets/e5a4352e-1d43-48ed-ad56-17d797f53a40)
+
 
 Step 2: Secure Unused Switchports
 Goal: Prevent unauthorized devices from accessing the network by shutting down unused ports and assigning them to a BlackHole VLAN.
 
 Shutdown Unused Ports on SW-1:
 
-bash
-Copy code
 SW-1(config)# interface range fa0/3 - 24
+
 SW-1(config-if-range)# shutdown
+
 SW-1(config-if-range)# exit
+
 Create VLAN 999 (BlackHole VLAN):
 
-bash
-Copy code
 SW-1(config)# vlan 999
+
 SW-1(config-vlan)# name BlackHole
+
 SW-1(config-vlan)# exit
+
 Move Unused Ports to BlackHole VLAN:
 
-bash
-Copy code
 SW-1(config)# interface range fa0/3 - 24
+
 SW-1(config-if-range)# switchport access vlan 999
+
 SW-1(config-if-range)# exit
+
+![{1FA4AD0C-E265-4E4F-95EB-BA987A46384E}](https://github.com/user-attachments/assets/6cd978f2-19c2-497e-bf63-b289adb008d6)
+
 Step 3: Implement Port Security
 Goal: Limit the number of MAC addresses that can be learned on each access port.
 
 Enable Port Security on Active Ports on SW-1:
 
-bash
-Copy code
 SW-1(config)# interface range fa0/1 - 2
+
 SW-1(config-if-range)# switchport port-security
+
 SW-1(config-if-range)# switchport port-security maximum 4
+
 SW-1(config-if-range)# switchport port-security violation protect
+
 SW-1(config-if-range)# switchport port-security mac-address sticky
+
 SW-1(config-if-range)# exit
+
 Configure Static MAC Address on F0/1 (for a known device):
 
-bash
-Copy code
 SW-1(config)# interface fa0/1
-SW-1(config-if)# switchport port-security mac-address 0001.1234.5678
+
+SW-1(config-if)# switchport port-security mac-address 0010.11E8.3CBB
+
 SW-1(config-if)# exit
-Verify Port Security: Use the show port-security command to verify that port security is working as expected.
+
+![{7934505B-188F-418D-8768-CD681B6971AB}](https://github.com/user-attachments/assets/4116619d-16dc-4144-8be1-970a389c047f)
 
 Step 4: Enable DHCP Snooping
 Goal: Protect the network from rogue DHCP servers.
