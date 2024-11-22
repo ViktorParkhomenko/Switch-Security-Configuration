@@ -207,4 +207,4 @@ Unused ports security: Secured unused ports by shutting them down and moving the
 Port security: Implemented port security with a limit on MAC addresses per port, and configured violation modes.
 DHCP Snooping: Protected against rogue DHCP servers by enabling DHCP Snooping and limiting DHCP packets on untrusted ports.
 PortFast and BPDU Guard: Ensured fast port transitions and protection against potential network loops.
-By implementing these configurations, we’ve enhanced the network's security and ensured a more stable and reliable environment, effectively preventing common attacks such as DHCP spoofing and unauthorized access via unused switch ports.
+By implementing these configurations, I’ve enhanced the network's security and ensured a more stable and reliable environment, effectively preventing common attacks such as DHCP spoofing and unauthorized access via unused switch ports.
